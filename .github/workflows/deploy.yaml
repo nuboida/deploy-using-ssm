@@ -1,0 +1,27 @@
+name: Deploy to AWS
+
+on: 
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v6
+              env:
+                AWS_REGION: ${{ secrets.AWS_REGION }}
+                AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
+                AWS_ROLEID: ${{ secrets.AWS_ROLEID }}
+              with:
+                aws-region: ${{ env.AWS_REGION }}
+                role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/${{ env.AWS_ROLEID }}
+                role-session-name: AWSGithubdeploy
